@@ -1,0 +1,30 @@
+@import url("../../styles/colors.css");
+@import url("../../styles/reset.css");
+
+.add-note {
+  background-color: blueviolet;
+  width: 10%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  cursor: pointer;
+}
+
+#txt1 {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 20px;
+  height: calc(min-content + 20px);
+  border: solid 1px white;
+  background-color: #181818;
+  color: #fff;
+  font-size: 1rem;
+  outline: none !important;
+}
+
+.md {
+  white-space: pre-wrap;
+}
