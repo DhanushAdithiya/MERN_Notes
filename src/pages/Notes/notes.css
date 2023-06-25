@@ -1,30 +1,135 @@
 @import url("../../styles/colors.css");
 @import url("../../styles/reset.css");
 
-.add-note {
-  background-color: blueviolet;
-  width: 10%;
-  height: 100px;
+.NOTES {
+  display: flex;
+
+  height: 92vh;
+}
+
+.notes-grid {
+  background-color: var(--note-light);
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  padding: 1em 0;
+}
+
+.note-all-notes {
+  width: 80%;
+}
+
+.single-note {
+  margin: 1em 0;
+  width: 100%;
+  background-color: var(--note-dark);
+  padding: 1em;
+  /* border-radius: 20px; */
+  filter: drop-shadow(0 4px 0px black);
+}
+
+.single-note h1 {
+  font-size: 150%;
+}
+
+.single-note p {
+  font-size: 100%;
+  font-weight: normal;
+  /* color: rgb(224, 170, 170); */
+}
+
+.note-fullscreen {
+  width: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 50px;
-  cursor: pointer;
+  /* background: url("https://images.unsplash.com/photo-1680320565397-10686d915f64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"); */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 
-#txt1 {
+.add-note {
+  margin-top: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 150%;
+  color: var(--white);
+  font-weight: bolder;
+  background-color: var(--note-accent);
   width: 80%;
-  margin: 0 auto;
-  margin-top: 20px;
-  padding: 20px;
-  height: calc(min-content + 20px);
-  border: solid 1px white;
-  background-color: #181818;
-  color: #fff;
-  font-size: 1rem;
-  outline: none !important;
+  padding: 1em;
 }
 
-.md {
-  white-space: pre-wrap;
+.note-full {
+  border: 2px solid black;
+  width: 70%;
+  height: 80vh;
+  background-color: #ccfccb;
+}
+
+.note-full-action input {
+  width: 40px;
+  height: 40px;
+}
+
+.note-full-action {
+  display: flex;
+  margin: 2%;
+  gap: 1em;
+  height: 8%;
+  justify-content: flex-end;
+}
+
+.note-full-action img {
+  padding: 0.5em;
+}
+
+.btn-del {
+  background-color: indianred;
+}
+
+.btn-save {
+  background-color: lightblue;
+}
+.btn-close {
+  background-color: lightgoldenrodyellow;
+}
+
+.note-container {
+  display: flex;
+  height: 87%;
+  justify-content: center;
+}
+
+.note-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3em;
+  width: 80%;
+  height: 100%;
+}
+
+.note-full-heading {
+  border-bottom: 8px solid black;
+  outline: none;
+  /* border: none; */
+}
+
+.text-area-note {
+  height: 75%;
+  border: none;
+  overflow: auto;
+  outline: none;
+  /* background-color: #d9d9d9; */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+
+  resize: none; /*remove the resize handle on the bottom right*/
+  filter: drop-shadow(6px 6px 0 #0fd50b);
+  border: 2px solid black;
 }

@@ -1,0 +1,49 @@
+@import url("../../styles/colors.css");
+@import url("../../styles/reset.css");
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 1em;
+  background-color: var(--white);
+  min-height: 8vh;
+}
+
+.nav-settings {
+  width: 20%;
+}
+
+.nav-logo {
+  width: 30%;
+}
+
+.nav-user {
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1em;
+}
+
+.nav-logout {
+  gap: 0.5em;
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-bg {
+  text-align: center;
+  width: 80%;
+}
+
+.add-bg {
+  display: flex;
+  gap: 1em;
+}
+
+.bg-submit {
+  width: 30%;
+  font-size: 70%;
+}

@@ -3,11 +3,10 @@ import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import "./notes.css";
 import ReactMarkdown from "react-markdown";
-
-function logOutUser(navigate) {
-  localStorage.removeItem("token");
-  navigate("/");
-}
+import Navbar from "../../components/Navbar/Navbar";
+import imgDelete from "../../icons/icons8-delete.svg";
+import imgSave from "../../icons/icons8-save-50.png";
+import imgClose from "../../icons/icons8-close-50.png";
 
 function editableElement(e) {
   const element = e.target;
@@ -76,15 +75,30 @@ const IndividualNotes = ({ details, setFullScreenNote }) => {
   const processedMarkdown = details.body.replace(/<br>/g, "\n");
   return (
     <div className="single-note" onClick={() => setFullScreenNote(details)}>
-      <h1>{details.title}</h1>
-      <ReactMarkdown className="md" children={processedMarkdown} />
+      <h1>
+        {details.title.length > 20
+          ? `${details.title.slice(0, 20)}...`
+          : details.title}
+      </h1>
+      <ReactMarkdown
+        className="md"
+        children={
+          processedMarkdown.length > 150
+            ? `${processedMarkdown.slice(0, 150)}...`
+            : processedMarkdown
+        }
+      />
     </div>
   );
 };
 
-const NoteFullScreen = ({ note, closeFullScreen }) => {
+const NoteFullScreen = ({ note, closeFullScreen, checkOpen, closeNew }) => {
   const headingRef = useRef(null);
   const contentRef = useRef(null);
+
+  if (checkOpen) {
+    closeNew(false);
+  }
 
   async function deleteNote() {
     const response = await fetch(`http://localhost:5000/notes/${note._id}`, {
@@ -115,25 +129,47 @@ const NoteFullScreen = ({ note, closeFullScreen }) => {
   return (
     <>
       <div className="note-full">
-        <h1
-          className="note-full-heading"
-          onClick={editableElement}
-          ref={headingRef}
-        >
-          {note.title}
-        </h1>
+        <div className="note-full-action">
+          <img
+            src={imgDelete}
+            alt="delete"
+            onClick={deleteNote}
+            className="btn-del"
+            style={{ width: "50px", height: "50px" }}
+          />
+          <img
+            src={imgSave}
+            alt="save"
+            className="btn-save"
+            onClick={patchNote}
+            style={{ width: "50px", height: "50px" }}
+          />
+          <img
+            src={imgClose}
+            alt="close"
+            className="btn-close"
+            onClick={closeFullScreen}
+            style={{ width: "50px", height: "50px" }}
+          />
+        </div>
+        <div className="note-container">
+          <div className="note-wrapper">
+            <h1
+              className="note-full-heading"
+              onClick={editableElement}
+              ref={headingRef}
+            >
+              {note.title}
+            </h1>
 
-        <textarea
-          className="text-area-note"
-          ref={contentRef}
-          defaultValue={note.body}
-          contentEditable="true"
-        ></textarea>
-      </div>
-      <div className="note-full-action">
-        <input type="submit" value={"SaveNote"} onClick={patchNote} />
-        <input type="submit" value={"Close Note"} onClick={closeFullScreen} />
-        <input type="submit" value={"Delete Note"} onClick={deleteNote} />
+            <textarea
+              key={note._id}
+              className="text-area-note"
+              ref={contentRef}
+              defaultValue={note.body}
+            ></textarea>
+          </div>
+        </div>
       </div>
     </>
   );
@@ -150,6 +186,7 @@ const Notes = () => {
   const [displayPrevious, setDisplayPrevious] = useState(false);
   const [fetchNotes, setFetchNotes] = useState(false);
   const [fullScreenNote, setFullScreenNote] = useState(null);
+  const [background, setBackground] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -162,6 +199,17 @@ const Notes = () => {
       setId(decoded.id);
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const response = fetch(`http://localhost:5000/users/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application.json",
+      },
+    })
+      .then((data) => data.json())
+      .then((data) => setBackground(data.background));
+  });
 
   useEffect(() => {
     setFetchNotes(true);
@@ -201,46 +249,55 @@ const Notes = () => {
 
   return (
     <>
-      <h1>Hello {user}</h1>
-      <h2>{id}</h2>
-      <input
-        className="btn-submit"
-        type="submit"
-        value="Logout"
-        onClick={() => logOutUser(navigate)}
-      />
-
-      <div className="notes_grid">
-        <div className="add-note" onClick={() => setDisplayNewNote(true)}>
-          +
+      <Navbar user={user} setBackground={setBackground} id={id} />
+      <div className="NOTES">
+        <div className="notes-grid">
+          <div
+            className="add-note"
+            onClick={() => {
+              setDisplayNewNote(true);
+              setFullScreenNote(null);
+            }}
+          >
+            Add a new Note!
+          </div>
+          <div className="note-all-notes">
+            {displayPrevious &&
+              previousNotes.map((note) => (
+                <IndividualNotes
+                  details={note}
+                  key={note._id}
+                  openFullScreen={openFullScreen}
+                  closeFullScreen={closeFullScreen}
+                  setFullScreenNote={setFullScreenNote}
+                />
+              ))}
+          </div>
         </div>
-        {displayNewNote && (
-          <Note
-            setDisplayNewNote={setDisplayNewNote}
-            title={title}
-            body={body}
-            setTitle={setTitle}
-            setBody={setBody}
-            id={id}
-            setFetchNotes={setFetchNotes}
-          />
-        )}
-        {displayPrevious &&
-          previousNotes.map((note) => (
-            <IndividualNotes
-              details={note}
-              key={note._id}
-              openFullScreen={openFullScreen}
-              closeFullScreen={closeFullScreen}
-              setFullScreenNote={setFullScreenNote}
+        <div
+          className="note-fullscreen"
+          style={{ backgroundImage: `url(${background})` }}
+        >
+          {displayNewNote && (
+            <Note
+              setDisplayNewNote={setDisplayNewNote}
+              title={title}
+              body={body}
+              setTitle={setTitle}
+              setBody={setBody}
+              id={id}
+              setFetchNotes={setFetchNotes}
             />
-          ))}
-        {fullScreenNote && (
-          <NoteFullScreen
-            note={fullScreenNote}
-            closeFullScreen={closeFullScreen}
-          />
-        )}
+          )}
+          {fullScreenNote && (
+            <NoteFullScreen
+              note={fullScreenNote}
+              closeFullScreen={closeFullScreen}
+              checkOpen={displayNewNote}
+              closeNew={setDisplayNewNote}
+            />
+          )}
+        </div>
       </div>
     </>
   );

@@ -34,10 +34,11 @@ html:focus-within {
 
 /* Set core body defaults */
 body {
-  min-height: 100vh;
+  height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
   background-color: var(--background-color-light);
+
   color: var(--text-dark);
 }
 
@@ -83,4 +84,8 @@ select {
 
 body {
   font-family: "Inter", sans-serif;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }

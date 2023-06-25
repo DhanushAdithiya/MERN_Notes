@@ -46,4 +46,19 @@ router.route("/add").post((req, res) => {
     .catch((err) => res.status(400).json("Error:  " + err));
 });
 
+router.route("/:id").patch((req, res) => {
+  User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+    .then((newData) => res.json(newData))
+    .catch((err) => res.status(400).json("Error" + err));
+});
+
+router.route("/:id").get((req, res) => {
+  User.findById(req.params.id)
+    .then((user) => res.json(user))
+    .catch((err) => res.status(400).json("Error" + err));
+});
+
 module.exports = router;
