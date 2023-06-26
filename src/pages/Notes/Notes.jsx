@@ -47,25 +47,40 @@ const Note = ({
   }
 
   return (
-    <div className="ind-note">
-      <div className="note-content">
-        <h1
-          onClick={editableElement}
-          onBlur={(e) => setTitle(e.target.textContent)}
-        >
-          {title}
-        </h1>
-        <textarea
-          className="text-area-note"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-        >
-          {body}
-        </textarea>
+    <div className="note-full">
+      <div className="note-full-action">
+        <img
+          src={imgSave}
+          alt="save"
+          className="btn-save"
+          onClick={saveNote}
+          style={{ width: "50px", height: "50px" }}
+        />
+        <img
+          src={imgClose}
+          className="btn-close"
+          onClick={closeNote}
+          alt="close"
+          style={{ width: "50px", height: "50px" }}
+        />
       </div>
-      <div className="note-actions">
-        <input type="submit" value="save note" onClick={saveNote} />
-        <input type="submit" value="close note" onClick={closeNote} />
+      <div className="note-container">
+        <div className="note-wrapper">
+          <h1
+            className="note-full-heading"
+            onClick={editableElement}
+            onBlur={(e) => setTitle(e.target.textContent)}
+          >
+            {title}
+          </h1>
+          <textarea
+            className="text-area-note"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+          >
+            {body}
+          </textarea>
+        </div>
       </div>
     </div>
   );
@@ -187,6 +202,8 @@ const Notes = () => {
   const [fetchNotes, setFetchNotes] = useState(false);
   const [fullScreenNote, setFullScreenNote] = useState(null);
   const [background, setBackground] = useState("");
+  const [verified, setVerified] = useState(false);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -195,10 +212,13 @@ const Notes = () => {
       navigate("/");
     } else {
       const decoded = jwtDecode(token);
+      console.log(decoded);
       setUser(decoded.username);
       setId(decoded.id);
+      setVerified(decoded.verification);
+      setEmail(decoded.email);
     }
-  }, [navigate]);
+  }, [navigate, verified, email]);
 
   useEffect(() => {
     const response = fetch(`http://localhost:5000/users/${id}`, {
@@ -247,60 +267,68 @@ const Notes = () => {
     setFullScreenNote(null);
   }
 
-  return (
-    <>
-      <Navbar user={user} setBackground={setBackground} id={id} />
-      <div className="NOTES">
-        <div className="notes-grid">
+  if (verified) {
+    return (
+      <>
+        <Navbar user={user} setBackground={setBackground} id={id} />
+        <div className="NOTES">
+          <div className="notes-grid">
+            <div
+              className="add-note"
+              onClick={() => {
+                setDisplayNewNote(true);
+                setFullScreenNote(null);
+              }}
+            >
+              Add a new Note!
+            </div>
+            <div className="note-all-notes">
+              {displayPrevious &&
+                previousNotes.map((note) => (
+                  <IndividualNotes
+                    details={note}
+                    key={note._id}
+                    openFullScreen={openFullScreen}
+                    closeFullScreen={closeFullScreen}
+                    setFullScreenNote={setFullScreenNote}
+                  />
+                ))}
+            </div>
+          </div>
           <div
-            className="add-note"
-            onClick={() => {
-              setDisplayNewNote(true);
-              setFullScreenNote(null);
-            }}
+            className="note-fullscreen"
+            style={{ backgroundImage: `url(${background})` }}
           >
-            Add a new Note!
-          </div>
-          <div className="note-all-notes">
-            {displayPrevious &&
-              previousNotes.map((note) => (
-                <IndividualNotes
-                  details={note}
-                  key={note._id}
-                  openFullScreen={openFullScreen}
-                  closeFullScreen={closeFullScreen}
-                  setFullScreenNote={setFullScreenNote}
-                />
-              ))}
+            {displayNewNote && (
+              <Note
+                setDisplayNewNote={setDisplayNewNote}
+                title={title}
+                body={body}
+                setTitle={setTitle}
+                setBody={setBody}
+                id={id}
+                setFetchNotes={setFetchNotes}
+              />
+            )}
+            {fullScreenNote && (
+              <NoteFullScreen
+                note={fullScreenNote}
+                closeFullScreen={closeFullScreen}
+                checkOpen={displayNewNote}
+                closeNew={setDisplayNewNote}
+              />
+            )}
           </div>
         </div>
-        <div
-          className="note-fullscreen"
-          style={{ backgroundImage: `url(${background})` }}
-        >
-          {displayNewNote && (
-            <Note
-              setDisplayNewNote={setDisplayNewNote}
-              title={title}
-              body={body}
-              setTitle={setTitle}
-              setBody={setBody}
-              id={id}
-              setFetchNotes={setFetchNotes}
-            />
-          )}
-          {fullScreenNote && (
-            <NoteFullScreen
-              note={fullScreenNote}
-              closeFullScreen={closeFullScreen}
-              checkOpen={displayNewNote}
-              closeNew={setDisplayNewNote}
-            />
-          )}
-        </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  } else {
+    return (
+      <h1>
+        Please verify by checking your spam folder of email and log back in!
+      </h1>
+    );
+  }
 };
 
 export default Notes;

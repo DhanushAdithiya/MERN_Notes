@@ -24,6 +24,7 @@ function App() {
     });
 
     const data = await response.json();
+
     if (response.status === 200) {
       setError(false);
       localStorage.setItem("token", data.token);
